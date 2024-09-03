@@ -11,20 +11,34 @@ jobs:
     steps:
       - name: Checkout Source
         uses: actions/checkout@v3
+
       - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
       - name: Build Docker Image
-        run: docker build -t brotin003/devops .
-      - name: Publish image to docker hub
+        run: docker build -t brotin003/devops:latest .
+
+      - name: Publish image to Docker Hub
         run: docker push brotin003/devops:latest   
 
   deploy: 
     needs: build
-    runs-on: aws-ec2    
+    runs-on: ubuntu-latest
     steps:
-      - name: Pull image from docker hub
+      - name: Login to Docker Hub
+        env:
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+      - name: Pull image from Docker Hub
         run: docker pull brotin003/devops:latest 
+
       - name: Delete Old Container
-        run: docker rm -f reactContainer
-      - name: Run docker container
-        run: docker run -d -p 3000:80 --name reactContainer brotin003/devops
+        run: docker rm -f reactContainer || true
+
+      - name: Run Docker Container
+        run: docker run -d -p 3000:80 --name reactContainer brotin003/devops:latest
