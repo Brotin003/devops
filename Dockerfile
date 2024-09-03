@@ -1,15 +1,19 @@
 # Build react app
-FROM node:alpine3.18 as build
+FROM node:alpine3.18 AS build
 WORKDIR /app
-COPY package.json .
+COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-#Server with Nginx
-FROM nginx:1.23alpine
+# Serve with Nginx
+FROM nginx:1.23-alpine
 WORKDIR /usr/share/nginx/html
+
 RUN rm -rf *
 COPY --from=build /app/dist .
+=======
+RUN rm -rf ./*
+COPY --from=build /app/build .
 EXPOSE 80
-ENRTYPOINT ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
