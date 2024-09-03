@@ -1,4 +1,4 @@
-# Build react app
+# Build react app with Vite
 FROM node:alpine3.18 AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
@@ -14,6 +14,6 @@ RUN rm -rf *
 COPY --from=build /app/dist .
 =======
 RUN rm -rf ./*
-COPY --from=build /app/build .
+COPY --from=build /app/dist .
 EXPOSE 80
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
