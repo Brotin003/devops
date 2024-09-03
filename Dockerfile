@@ -10,6 +10,6 @@ RUN npm run build
 FROM nginx:1.23alpine
 WORKDIR /usr/share/nginx/html
 RUN rm -rf *
-COPY --from=dist /app/dist .
+COPY --from=build /app/build .
 EXPOSE 80
 ENRTYPOINT ["nginx", "-g", "daemon off;"]
