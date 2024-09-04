@@ -19,7 +19,7 @@ function App() {
       <h1>This is just a trial for github actions
         
       </h1>
-      <h2>This is modification 2</h2>
+      <h2>This is modification 2 / 1</h2>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
